@@ -8,6 +8,7 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
+import java.util.concurrent.*;
 
 public class HttpServer {
 
@@ -47,21 +48,44 @@ public class HttpServer {
     }
 
     /**
-     * Inicia el loop del servidor HTTP con manejo concurrente de peticiones
+     * Inicia el loop del servidor HTTP con manejo concurrente y apagado elegante.
+     * Ctrl+C (o cualquier señal de terminación) espera a que terminen los requests en curso.
      */
     public void start() throws IOException {
+        ExecutorService executor = Executors.newCachedThreadPool();
         ServerSocket serverSocket = new ServerSocket(port);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("\nApagando servidor...");
+            try { serverSocket.close(); } catch (IOException ignored) {}
+            executor.shutdown();
+            try {
+                if (!executor.awaitTermination(30, TimeUnit.SECONDS)) {
+                    System.out.println("Tiempo de espera agotado, forzando cierre.");
+                    executor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executor.shutdownNow();
+            }
+            System.out.println("Servidor apagado.");
+        }));
+
         System.out.println("Servidor escuchando en puerto " + port);
 
-        while (true) {
-            Socket clientSocket = serverSocket.accept();
-            new Thread(() -> {
-                try {
-                    handleRequest(clientSocket);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }).start();
+        while (!serverSocket.isClosed()) {
+            try {
+                Socket clientSocket = serverSocket.accept();
+                executor.submit(() -> {
+                    try {
+                        handleRequest(clientSocket);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } catch (IOException e) {
+                if (serverSocket.isClosed()) break;
+                e.printStackTrace();
+            }
         }
     }
 
