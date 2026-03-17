@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora de Notas</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<h1>Calculadora de Notas</h1>
+<p class="subtitle">Aplicación de ejemplo — MicroFramework Web</p>
+
+<img src="/gato-razas-tipos.webp" alt="Razas de gatos" style="width:100%;border-radius:6px;margin-bottom:1.5rem;">
+
+<section>
+    <h2>Describir nota &nbsp;<code>GET /calificar?nota=</code></h2>
+    <p class="hint">Ingresa una nota entre 0.0 y 5.0</p>
+    <div class="card">
+        <input id="notaInput" type="number" min="0" max="5" step="0.1" placeholder="ej. 4.5" />
+        <button onclick="calificar()">Calificar</button>
+    </div>
+</section>
+
+<section>
+    <h2>Promedio &nbsp;<code>GET /promedio?notas=</code></h2>
+    <p class="hint">Separa las notas con comas</p>
+    <div class="card">
+        <input id="notasInput" type="text" placeholder="ej. 3.5, 4.0, 4.8" />
+        <button onclick="promedio()">Calcular</button>
+    </div>
+</section>
+
+<section>
+    <h2>¿Aprobó? &nbsp;<code>GET /aprobo?nota=</code></h2>
+    <p class="hint">Mínimo aprobatorio: 3.0</p>
+    <div class="card">
+        <input id="aproboInput" type="number" min="0" max="5" step="0.1" placeholder="ej. 2.8" />
+        <button onclick="aprobo()">Verificar</button>
+    </div>
+</section>
+
+<section>
+    <h2>Respuesta del servidor</h2>
+    <div id="output" class="output">— ninguna petición aún —</div>
+    <pre id="raw" class="raw"></pre>
+</section>
+
+<script src="/app.js"></script>
+</body>
+</html>
