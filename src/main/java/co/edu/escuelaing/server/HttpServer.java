@@ -47,16 +47,21 @@ public class HttpServer {
     }
 
     /**
-     * Inicia el loop del servidor HTTP
+     * Inicia el loop del servidor HTTP con manejo concurrente de peticiones
      */
     public void start() throws IOException {
         ServerSocket serverSocket = new ServerSocket(port);
         System.out.println("Servidor escuchando en puerto " + port);
 
-        // Múltiples solicitudes no concurrentes (secuencial)
         while (true) {
             Socket clientSocket = serverSocket.accept();
-            handleRequest(clientSocket);
+            new Thread(() -> {
+                try {
+                    handleRequest(clientSocket);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
         }
     }
 
