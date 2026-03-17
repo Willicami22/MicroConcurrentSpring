@@ -215,7 +215,7 @@ public class HttpServer {
     private boolean serveStaticFile(String uri, PrintWriter out, OutputStream rawOut) {
         try {
             // Mapear URI a archivo en webroot
-            String filePath = "src/main/resources/webroot" + uri;
+            String filePath = (new File("webroot").exists() ? "webroot" : "src/main/resources/webroot") + uri;
             File file = new File(filePath);
 
             if (!file.exists() || file.isDirectory()) return false;

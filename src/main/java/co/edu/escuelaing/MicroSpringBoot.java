@@ -11,7 +11,8 @@ import java.util.List;
 public class MicroSpringBoot {
 
     public static void main(String[] args) throws Exception {
-        HttpServer server = new HttpServer(8080);
+        int port = System.getenv("PORT") != null ? Integer.parseInt(System.getenv("PORT")) : 8080;
+        HttpServer server = new HttpServer(port);
 
         if (args.length > 0) {
 
