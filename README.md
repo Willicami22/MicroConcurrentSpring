@@ -327,6 +327,6 @@ La aplicación accesible desde el navegador apuntando a la IP pública de la ins
 
 ## Autor
 
-William Camilo Camiher
+William Camilo Hernandez Deaza
 Escuela Colombiana de Ingeniería Julio Garavito
 Transformaciones Digitales — 9.° semestre
