@@ -5,6 +5,7 @@ import co.edu.escuelaing.annotations.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 
@@ -139,9 +140,11 @@ public class HttpServer {
         Map<String, String> queryParams = new HashMap<>();
         if (!query.isEmpty()) {
             for (String pair : query.split("&")) {
-                String[] kv = pair.split("=");
+                String[] kv = pair.split("=", 2);
                 if (kv.length == 2) {
-                    queryParams.put(kv[0], kv[1]);
+                    String key = URLDecoder.decode(kv[0], StandardCharsets.UTF_8);
+                    String value = URLDecoder.decode(kv[1], StandardCharsets.UTF_8);
+                    queryParams.put(key, value);
                 }
             }
         }
@@ -151,10 +154,30 @@ public class HttpServer {
             if (params[i].isAnnotationPresent(RequestParam.class)) {
                 RequestParam rp = params[i].getAnnotation(RequestParam.class);
                 // Usar valor del query o el defaultValue
-                args[i] = queryParams.getOrDefault(rp.value(), rp.defaultValue());
+                String rawValue = queryParams.getOrDefault(rp.value(), rp.defaultValue());
+                args[i] = convertToType(rawValue, params[i].getType());
             }
         }
         return args;
+    }
+
+    private Object convertToType(String rawValue, Class<?> type) {
+        if (type == String.class) {
+            return rawValue;
+        }
+        if (type == int.class || type == Integer.class) {
+            return Integer.parseInt(rawValue);
+        }
+        if (type == double.class || type == Double.class) {
+            return Double.parseDouble(rawValue);
+        }
+        if (type == long.class || type == Long.class) {
+            return Long.parseLong(rawValue);
+        }
+        if (type == boolean.class || type == Boolean.class) {
+            return Boolean.parseBoolean(rawValue);
+        }
+        return rawValue;
     }
 
     /**

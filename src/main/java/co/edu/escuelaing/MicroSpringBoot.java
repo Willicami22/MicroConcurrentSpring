@@ -34,7 +34,7 @@ public class MicroSpringBoot {
     private static List<Class<?>> findControllers() throws Exception {
         List<Class<?>> result = new ArrayList<>();
 
-        String packageName = "co.edu.escuelaing.reflexionlab";
+        String packageName = "co.edu.escuelaing";
         String path = packageName.replace('.', '/');
 
         URL resource = Thread.currentThread()
